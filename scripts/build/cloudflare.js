@@ -3,14 +3,14 @@ const build = require('esbuild');
 const alias = require('esbuild-plugin-alias');
 
 const shims = {
-  empty: path.resolve(__dirname, '..', 'src', 'shims', 'empty.ts'),
-  buffer: path.resolve(__dirname, '..', 'src', 'shims', 'buffer.ts'),
+  empty: path.resolve(__dirname, '..', '..', 'src', 'shims', 'empty.ts'),
+  buffer: path.resolve(__dirname, '..', '..', 'src', 'shims', 'buffer.ts'),
 };
 
 build
   .build({
-    entryPoints: [path.resolve(__dirname, '..', 'src', 'index.ts')],
-    outfile: path.resolve(__dirname, '..', 'dist', 'index.js'),
+    entryPoints: [path.resolve(__dirname, '..', '..', 'src', 'index.ts')],
+    outfile: path.resolve(__dirname, '..', '..', 'dist', 'index.js'),
     bundle: true,
     minify: true,
     define: {

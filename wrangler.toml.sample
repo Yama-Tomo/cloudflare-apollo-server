@@ -9,7 +9,7 @@ compatibility_date = "2021-09-23"
 
 [build]
 upload.format = "service-worker"
-command = "pnpm build"
+command = "pnpm build:cloudflare"
 
 [env.prod]
 name = "%YOUR-WORKER-NAME%_prod"
