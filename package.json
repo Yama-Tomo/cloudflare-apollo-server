@@ -12,7 +12,8 @@
     "format": "prettier -w './**/*.{js,ts,tsx}'",
     "dev": "wrangler dev",
     "deploy:dev": "wrangler publish",
-    "deploy:prod": "NODE_ENV=production wrangler publish --env prod"
+    "deploy:prod": "NODE_ENV=production wrangler publish --env prod",
+    "postinstall": "patch-package"
   },
   "author": "",
   "license": "MIT",
@@ -36,6 +37,7 @@
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "npm-run-all": "^4.1.5",
+    "patch-package": "^6.4.7",
     "prettier": "^2.4.1",
     "typescript": "^4.4.3"
   }
