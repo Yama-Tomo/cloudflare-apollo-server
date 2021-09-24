@@ -11,7 +11,7 @@
   $ pnpm install
   $ pnpm dev
   ```
-- 3. go to https://studio.apollographql.com/sandbox/explorer and set the `SANDBOX` to `http://127.0.0.1:8787/`
+- 3. go to https://studio.apollographql.com/sandbox/explorer and set the `SANDBOX` to `http://127.0.0.1:7000/`
 
 ## deploy
 
