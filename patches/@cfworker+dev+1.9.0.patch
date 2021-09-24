@@ -1,0 +1,22 @@
+diff --git a/node_modules/@cfworker/dev/src/cli/run-command.js b/node_modules/@cfworker/dev/src/cli/run-command.js
+index d9937c1..a16fd72 100644
+--- a/node_modules/@cfworker/dev/src/cli/run-command.js
++++ b/node_modules/@cfworker/dev/src/cli/run-command.js
+@@ -5,6 +5,8 @@ import { logger } from '../logger.js';
+ import { StaticSite } from '../static-site.js';
+ import { WorkerHost } from '../worker-host.js';
+
++const customBundler = process.env.CFWORKER_CUSTOM_BUNDLER && (await import(process.env.CFWORKER_CUSTOM_BUNDLER)).Bundler;
++
+ /**
+  * @typedef {object} RunCommandArgs
+  * @property {string} entry
+@@ -25,7 +27,7 @@ export class RunCommand {
+    */
+   constructor(args) {
+     this.args = args;
+-    this.bundler = new Bundler([args.entry], args.watch, [], args.check);
++    this.bundler = customBundler ? new customBundler([args.entry], args.watch, [], args.check, logger) : new Bundler([args.entry], args.watch, [], args.check);
+     this.site = args.site ? new StaticSite(args.site, args.watch) : null;
+     this.kv = new KV(args.kv, args.watch);
+     this.host = new WorkerHost(args.port, args.inspect, this.site, this.kv);
