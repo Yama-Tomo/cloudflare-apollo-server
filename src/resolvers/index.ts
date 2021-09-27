@@ -1,6 +1,8 @@
-const resolvers = {
+import { Resolvers } from './generated_types';
+
+const resolvers: Resolvers = {
   Query: {
-    hello: (): string => 'Hello world!',
+    hello: () => 'Hello world!',
   },
 };
 
