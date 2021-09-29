@@ -6,7 +6,8 @@
   "scripts": {
     "lint": "run-p -l -c lint:*",
     "lint:eslint": "eslint './**/*.{js,mjs,ts,tsx}' --format codeframe --color --max-warnings=0",
-    "lint:type": "tsc --pretty",
+    "lint:type-src": "tsc --pretty",
+    "lint:type-test": "tsc -p ./tests/tsconfig.json --pretty",
     "lint:format": "prettier -c './**/*.{js,mjs,ts,tsx}'",
     "build:cloudflare": "pnpm lint && node ./scripts/build/cloudflare.js",
     "format": "prettier -w './**/*.{js,mjs,ts,tsx}'",
