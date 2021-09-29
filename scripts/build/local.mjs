@@ -3,12 +3,14 @@
 import { EventEmitter } from 'events';
 import build from 'esbuild';
 import buildOpts from './build_opts.js';
+import glob from 'glob';
 
 export class Bundler extends EventEmitter {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   constructor(globs, watch, external = [], typeCheck = true, treeShake = true, { logger }) {
     super();
 
+    this.globs = globs;
     this.logger = logger;
     this.watch = watch;
     this.code = '';
@@ -18,7 +20,12 @@ export class Bundler extends EventEmitter {
   }
 
   async bundle() {
-    const opts = { ...buildOpts(), minify: false, write: false };
+    const opts = {
+      ...buildOpts(),
+      entryPoints: this.globs.map((g) => glob.sync(g)).flat(),
+      minify: false,
+      write: false,
+    };
     if (this.watch) {
       build
         .build({
@@ -40,7 +47,7 @@ export class Bundler extends EventEmitter {
   }
 
   updateCode(buildResult) {
-    const code = buildResult?.outputFiles[0]?.text;
+    const code = buildResult?.outputFiles.map((out) => out?.text || '').join(' ');
     if (!code) {
       return;
     }
