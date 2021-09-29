@@ -25,3 +25,49 @@ index d9937c1..f1fcc9f 100644
      this.site = args.site ? new StaticSite(args.site, args.watch) : null;
      this.kv = new KV(args.kv, args.watch);
      this.host = new WorkerHost(args.port, args.inspect, this.site, this.kv);
+diff --git a/node_modules/@cfworker/dev/src/cli/test-command.js b/node_modules/@cfworker/dev/src/cli/test-command.js
+index fe22adc..9ad2e4a 100644
+--- a/node_modules/@cfworker/dev/src/cli/test-command.js
++++ b/node_modules/@cfworker/dev/src/cli/test-command.js
+@@ -3,6 +3,23 @@
+ import { StaticSite } from '../static-site.js';
+ import { TestHost } from '../test-host.js';
+
++const bundler = await (async () => {
++  if (!process.env.CFWORKER_CUSTOM_BUNDLER) return (...args) => new Bundler(...args);
++
++  const customBundler = (await import(process.env.CFWORKER_CUSTOM_BUNDLER)).Bundler;
++  const logger = (await import('../logger.js')).logger;
++  return (globs, watch, externals, typeCheck, treeshake) => new customBundler(globs, watch, externals, typeCheck, treeshake, { logger });
++})();
++
++const testHost = await (async () => {
++  if (!process.env.CFWORKER_CUSTOM_TEST_HOST) return (...args) => new TestHost(...args);
++
++  const customTestHost = (await import(process.env.CFWORKER_CUSTOM_TEST_HOST)).TestHost
++  const logger = (await import('../logger.js')).logger;
++  const WorkerHost = (await import('../worker-host.js')).WorkerHost;
++  return (port, inspect, site, kv) => new customTestHost(port, inspect, site, kv, { WorkerHost, logger });
++})();
++
+ /**
+  * @typedef {object} TestCommandArgs
+  * @property {string[]} globs
+@@ -21,7 +38,7 @@
+   constructor(args) {
+     this.args = args;
+     const treeshake = false;
+-    this.bundler = new Bundler(
++    this.bundler = bundler(
+       args.globs,
+       args.watch,
+       ['mocha', 'chai'],
+@@ -30,7 +47,7 @@
+     );
+     this.site = args.site ? new StaticSite(args.site, args.watch) : null;
+     this.kv = new KV(args.kv, args.watch);
+-    this.testHost = new TestHost(args.port, args.inspect, this.site, this.kv);
++    this.testHost = testHost(args.port, args.inspect, this.site, this.kv);
+   }
+
+   async execute() {
