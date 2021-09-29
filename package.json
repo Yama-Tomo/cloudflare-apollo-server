@@ -16,6 +16,7 @@
     "dev:gen-graphql-types": "graphql-codegen --watch",
     "deploy:dev": "wrangler publish",
     "deploy:prod": "NODE_ENV=production wrangler publish --env prod",
+    "test": "CFWORKER_CUSTOM_BUNDLER=$PWD/scripts/build/local.mjs CFWORKER_CUSTOM_TEST_HOST=$PWD/scripts/build/test.mjs pnpm -- cfworker test -p 7001",
     "postinstall": "patch-package"
   },
   "author": "",
