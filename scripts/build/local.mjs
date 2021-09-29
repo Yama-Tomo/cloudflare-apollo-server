@@ -6,7 +6,7 @@ import buildOpts from './build_opts.js';
 
 export class Bundler extends EventEmitter {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  constructor(globs, watch, external = [], typeCheck = true, logger) {
+  constructor(globs, watch, external = [], typeCheck = true, treeShake = true, { logger }) {
     super();
 
     this.logger = logger;
