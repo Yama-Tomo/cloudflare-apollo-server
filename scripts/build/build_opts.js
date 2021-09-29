@@ -7,8 +7,7 @@ const shims = {
 };
 
 module.exports = () => ({
-  entryPoints: [path.resolve(__dirname, '..', '..', 'src', 'index.ts')],
-  outfile: path.resolve(__dirname, '..', '..', 'dist', 'index.js'),
+  outdir: path.resolve(__dirname, '..', '..', 'dist'),
   bundle: true,
   minify: true,
   define: {
