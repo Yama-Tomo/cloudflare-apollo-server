@@ -3,4 +3,6 @@ const bufferBrowserify = require('node_modules/buffer');
 
 global.Buffer = bufferBrowserify.Buffer;
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 export = bufferBrowserify;
