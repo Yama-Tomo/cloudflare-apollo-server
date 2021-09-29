@@ -13,6 +13,18 @@
   ```
 - 3. go to https://studio.apollographql.com/sandbox/explorer and set the `SANDBOX` to `http://127.0.0.1:7000/`
 
+## test
+
+```bash
+$ pnpm test 'tests/**/*.test.ts'
+```
+
+with watch mode
+
+```bash
+$ pnpm test -- -w 'tests/**/*.test.ts'
+```
+
 ## deploy
 
 ```bash
