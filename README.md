@@ -25,6 +25,12 @@ with watch mode
 $ pnpm test -- -w 'tests/**/*.test.ts'
 ```
 
+with code coverage
+
+```bash
+$ pnpm test:with-cov 'tests/**/*.test.ts'
+```
+
 ## deploy
 
 ```bash
