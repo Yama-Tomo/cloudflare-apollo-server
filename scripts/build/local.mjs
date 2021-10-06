@@ -4,6 +4,9 @@ import { EventEmitter } from 'events';
 import build from 'esbuild';
 import buildOpts from './build_opts.js';
 import glob from 'glob';
+import path from 'path';
+
+const dirname = path.dirname(new URL(import.meta.url).pathname);
 
 export class Bundler extends EventEmitter {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -20,9 +23,15 @@ export class Bundler extends EventEmitter {
   }
 
   async bundle() {
+    const entryPoints = this.globs.map((g) => glob.sync(g)).flat();
+
     const opts = {
       ...buildOpts(),
-      entryPoints: this.globs.map((g) => glob.sync(g)).flat(),
+      stdin: {
+        contents: entryPoints.map((f) => `import "./${f}"`).join('\n'),
+        resolveDir: path.resolve(dirname, '..', '..'),
+        loader: 'ts',
+      },
       minify: false,
       write: false,
     };
