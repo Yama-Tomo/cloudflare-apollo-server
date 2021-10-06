@@ -32,7 +32,7 @@ class ExtendApolloServer extends ApolloServer {
   }
 }
 
-const createServer = (cfOpts?: CFOpts) => {
+const createServer = (cfOpts?: CFOpts): ExtendApolloServer => {
   return new ExtendApolloServer(
     {
       typeDefs,

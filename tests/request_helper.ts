@@ -3,7 +3,7 @@ import { CFOpts, createServer } from '../src/server';
 const doRequest = async (
   query: string,
   opts?: Partial<{ cfOpts: CFOpts; headers: HeadersInit }>
-): Promise<any> => {
+): Promise<unknown> => {
   const server = createServer(opts?.cfOpts);
 
   const request = new Request(`/`, {
