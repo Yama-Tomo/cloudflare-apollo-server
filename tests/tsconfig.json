@@ -1,7 +1,10 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "isolatedModules": false
+    "isolatedModules": false,
+    "paths": {
+      "@main/*": ["./src/*"]
+    }
   },
   "include": [
     "./",

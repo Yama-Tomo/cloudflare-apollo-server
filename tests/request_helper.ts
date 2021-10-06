@@ -1,4 +1,4 @@
-import { CFOpts, createServer } from '../src/server';
+import { CFOpts, createServer } from '@main/server';
 
 const doRequest = async (
   query: string,
