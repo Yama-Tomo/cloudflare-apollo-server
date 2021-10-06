@@ -1,11 +1,11 @@
 diff --git a/node_modules/@cfworker/dev/src/cli/run-command.js b/node_modules/@cfworker/dev/src/cli/run-command.js
-index d9937c1..f1fcc9f 100644
+index d9937c1..7ba13c4 100644
 --- a/node_modules/@cfworker/dev/src/cli/run-command.js
 +++ b/node_modules/@cfworker/dev/src/cli/run-command.js
-@@ -5,6 +5,13 @@
+@@ -5,6 +5,13 @@ import { logger } from '../logger.js';
  import { StaticSite } from '../static-site.js';
  import { WorkerHost } from '../worker-host.js';
-
+ 
 +const bundler = await (async () => {
 +  if (!process.env.CFWORKER_CUSTOM_BUNDLER) return (...args) => new Bundler(...args);
 +
@@ -16,7 +16,7 @@ index d9937c1..f1fcc9f 100644
  /**
   * @typedef {object} RunCommandArgs
   * @property {string} entry
-@@ -25,7 +32,7 @@
+@@ -25,7 +32,7 @@ export class RunCommand {
     */
    constructor(args) {
      this.args = args;
@@ -26,13 +26,13 @@ index d9937c1..f1fcc9f 100644
      this.kv = new KV(args.kv, args.watch);
      this.host = new WorkerHost(args.port, args.inspect, this.site, this.kv);
 diff --git a/node_modules/@cfworker/dev/src/cli/test-command.js b/node_modules/@cfworker/dev/src/cli/test-command.js
-index fe22adc..9ad2e4a 100644
+index fe22adc..d56f3c4 100644
 --- a/node_modules/@cfworker/dev/src/cli/test-command.js
 +++ b/node_modules/@cfworker/dev/src/cli/test-command.js
-@@ -3,6 +3,23 @@
+@@ -3,6 +3,23 @@ import { KV } from '../kv.js';
  import { StaticSite } from '../static-site.js';
  import { TestHost } from '../test-host.js';
-
+ 
 +const bundler = await (async () => {
 +  if (!process.env.CFWORKER_CUSTOM_BUNDLER) return (...args) => new Bundler(...args);
 +
@@ -53,7 +53,7 @@ index fe22adc..9ad2e4a 100644
  /**
   * @typedef {object} TestCommandArgs
   * @property {string[]} globs
-@@ -21,7 +38,7 @@
+@@ -21,7 +38,7 @@ export class TestCommand {
    constructor(args) {
      this.args = args;
      const treeshake = false;
@@ -62,12 +62,24 @@ index fe22adc..9ad2e4a 100644
        args.globs,
        args.watch,
        ['mocha', 'chai'],
-@@ -30,7 +47,7 @@
+@@ -30,7 +47,7 @@ export class TestCommand {
      );
      this.site = args.site ? new StaticSite(args.site, args.watch) : null;
      this.kv = new KV(args.kv, args.watch);
 -    this.testHost = new TestHost(args.port, args.inspect, this.site, this.kv);
 +    this.testHost = testHost(args.port, args.inspect, this.site, this.kv);
    }
-
+ 
    async execute() {
+diff --git a/node_modules/@cfworker/dev/src/worker-host.js b/node_modules/@cfworker/dev/src/worker-host.js
+index bd5d65e..7b64c1b 100644
+--- a/node_modules/@cfworker/dev/src/worker-host.js
++++ b/node_modules/@cfworker/dev/src/worker-host.js
+@@ -190,7 +190,6 @@ export class WorkerHost extends EventEmitter {
+     res.writeHead(status, statusText, headers);
+     res.write(Buffer.from(body, 'binary'));
+     res.end();
+-    logger.log(statusChalk(status)(`${status} ${method.padEnd(7)} ${url}`));
+     this.emit('request-end', method, url, status, statusText);
+   };
+ 

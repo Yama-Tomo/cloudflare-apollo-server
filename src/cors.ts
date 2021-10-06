@@ -23,8 +23,8 @@ const handleOptions = (request: Request): Response => {
 
 const applyForCORS = (
   request: Request,
-  next: () => PromiseLike<Response>
-): Response | PromiseLike<Response> => {
+  next: () => Promise<Response>
+): Response | Promise<Response> => {
   if (request.method === 'OPTIONS') {
     return handleOptions(request);
   }
