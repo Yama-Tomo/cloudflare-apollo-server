@@ -1,9 +1,13 @@
 // fork node_modules/@cfworker/dev/src/test-host.js
 
 import path from 'path';
+import { promises as fs } from 'fs';
 import { EventEmitter } from 'events';
 import build from 'esbuild';
 import alias from 'esbuild-plugin-alias';
+import { fromSource } from 'convert-source-map';
+import v8toIstanbul from 'v8-to-istanbul';
+import libCov from 'istanbul-lib-coverage';
 
 const dirname = path.dirname(new URL(import.meta.url).pathname);
 
@@ -59,10 +63,18 @@ export class TestHost extends EventEmitter {
     /** @type {number} */
     this.logger.progress('Running tests...');
 
+    if (process.env.COVERAGE === 'true') {
+      await page.coverage.startJSCoverage({ includeRawScriptCoverage: true });
+    }
     const failures = await page.evaluate(
       // eslint-disable-next-line no-undef
       () => new Promise((resolve) => mocha.run(resolve))
     );
+
+    if (process.env.COVERAGE === 'true') {
+      const covs = await page.coverage.stopJSCoverage();
+      await this.collectCoverage(covs);
+    }
 
     if (failures) {
       this.logger.error('Failed');
@@ -147,5 +159,74 @@ export class TestHost extends EventEmitter {
     this.logger.success('bundle jest-browserify successfully');
 
     return this._jestBrowserify;
+  }
+
+  async collectCoverage(coverages) {
+    const covTarget = coverages.find((cov) => cov.url.includes('/test.js'));
+    if (!covTarget) {
+      return;
+    }
+
+    const bundledTestCode = this.stripCfWorkerDevAppendCodes(covTarget.text);
+
+    const sourceMap = fromSource(bundledTestCode);
+    await this.fillEmptyStringSourcesContent(sourceMap);
+
+    // このパスは実在しないパスでも OK．ただし 1 階層ディレクトリをはさむパスにする必要がある
+    // source map に記載されているパスが 1 階層深いのでこのパスも階層を合わせないとカバレッジレポートを出力する際にソースコードを探し出せないため
+    const dummyScriptPath = `.dummy/bundled_test_code.js`;
+    const converter = v8toIstanbul(
+      dummyScriptPath,
+      0,
+      { source: bundledTestCode, sourceMap: sourceMap },
+      (path) => path.includes('/node_modules/')
+    );
+
+    await converter.load();
+    converter.applyCoverage(this.reCalcScriptCoverageRanges(covTarget.rawScriptCoverage.functions));
+
+    const cmap = libCov.createCoverageMap(converter.toIstanbul());
+    await fs.mkdir('.nyc_output', { recursive: true });
+    await fs.writeFile('.nyc_output/out.json', JSON.stringify(cmap.toJSON(), null, 2), 'utf-8');
+
+    converter.destroy();
+  }
+
+  stripCfWorkerDevAppendCodes(bundledTestCode) {
+    const bundledTestCodeLines = bundledTestCode.split('\n');
+    return bundledTestCodeLines.slice(3, bundledTestCodeLines.length - 3).join('\n');
+  }
+
+  // v8toIstanbul で null の sourcesContent があるとエラーが発生するのでその workaround
+  async fillEmptyStringSourcesContent(sourceMap) {
+    sourceMap.sourcemap.sourcesContent.forEach((content, idx) => {
+      if (content) {
+        return;
+      }
+
+      const filePath = sourceMap.sourcemap.sources[idx];
+      if (!filePath.includes('/node_modules/')) {
+        this.logger.warn(`sourcesContent is null: ${filePath}`);
+      }
+
+      sourceMap.sourcemap.sourcesContent[idx] = '';
+    });
+  }
+
+  // @cfworker/dev が追加するコードの文字数分削除したカバレッジに計算し直す
+  reCalcScriptCoverageRanges(scriptCoverages) {
+    const cfWorkerDevAppendCodesLen = 72;
+    return scriptCoverages.map((cov) => {
+      return !('ranges' in cov)
+        ? cov
+        : {
+            ...cov,
+            ranges: cov.ranges.map(({ startOffset, endOffset, ...rest }) => ({
+              ...rest,
+              startOffset: startOffset - cfWorkerDevAppendCodesLen,
+              endOffset: endOffset - cfWorkerDevAppendCodesLen,
+            })),
+          };
+    });
   }
 }

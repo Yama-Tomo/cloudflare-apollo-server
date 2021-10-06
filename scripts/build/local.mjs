@@ -33,6 +33,7 @@ export class Bundler extends EventEmitter {
         loader: 'ts',
       },
       minify: false,
+      sourcemap: 'inline',
       write: false,
     };
     if (this.watch) {
