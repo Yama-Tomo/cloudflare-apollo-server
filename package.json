@@ -47,6 +47,7 @@
     "convert-source-map": "^1.8.0",
     "esbuild": "^0.13.1",
     "esbuild-plugin-alias": "^0.1.2",
+    "esbuild-register": "^3.0.0",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "expect": "^27.2.3",

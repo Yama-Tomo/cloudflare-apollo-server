@@ -20,6 +20,7 @@ specifiers:
   convert-source-map: ^1.8.0
   esbuild: ^0.13.1
   esbuild-plugin-alias: ^0.1.2
+  esbuild-register: ^3.0.0
   eslint: ^7.32.0
   eslint-config-prettier: ^8.3.0
   expect: ^27.2.3
@@ -57,6 +58,7 @@ devDependencies:
   convert-source-map: 1.8.0
   esbuild: 0.13.1
   esbuild-plugin-alias: 0.1.2
+  esbuild-register: 3.0.0_esbuild@0.13.1
   eslint: 7.32.0
   eslint-config-prettier: 8.3.0_eslint@7.32.0
   expect: 27.2.3
@@ -2880,6 +2882,15 @@ packages:
     resolution: {integrity: sha512-WsX0OJy8IGOsGZV+4oHEU5B6XQUpxOsZN1iSoYf9COTDbY7WXcOwd1oCLYNWUIWCExyGXSghIGq2k7sXBldxwQ==}
     dev: true
 
+  /esbuild-register/3.0.0_esbuild@0.13.1:
+    resolution: {integrity: sha512-No7U3ZUd6gPrrC6gqdb3XFcf2lNqzn8nvQXcgcyOl8szMVuN6YUvOplnmakxWyogI9d8SiJMl0uzBzJck+Aoxw==}
+    peerDependencies:
+      esbuild: '>=0.12 <1'
+    dependencies:
+      esbuild: 0.13.1
+      jsonc-parser: 3.0.0
+    dev: true
+
   /esbuild-sunos-64/0.13.1:
     resolution: {integrity: sha512-yT9yledVqzgFnIR+imh0QHJU5K8DqJhnfaRYx6fPNM5ALhlXmbuQDLEEjEUwFzGI3ewz1ai/DD/USTCsNaWbHA==}
     cpu: [x64]
@@ -4245,6 +4256,10 @@ packages:
     hasBin: true
     dependencies:
       minimist: 1.2.5
+    dev: true
+
+  /jsonc-parser/3.0.0:
+    resolution: {integrity: sha512-fQzRfAbIBnR0IQvftw9FJveWiHp72Fg20giDrHz6TdfB12UH/uue0D3hm57UB5KgAVuniLMCaS8P1IMj9NR7cA==}
     dev: true
 
   /jsonfile/4.0.0:
