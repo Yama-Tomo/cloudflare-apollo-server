@@ -17,8 +17,7 @@
     "deploy:dev": "wrangler publish",
     "deploy:prod": "NODE_ENV=production wrangler publish --env prod",
     "test": "./scripts/test.sh",
-    "test:with-cov": "COVERAGE=true run-s 'test {@}' cov:html -- ",
-    "cov:html": "nyc report --reporter=html",
+    "test:with-cov": "./scripts/test_with_cov.sh",
     "postinstall": "patch-package"
   },
   "author": "",
