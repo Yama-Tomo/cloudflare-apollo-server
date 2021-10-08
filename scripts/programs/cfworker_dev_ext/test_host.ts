@@ -1,55 +1,57 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+
 // fork node_modules/@cfworker/dev/src/test-host.js
 
-import path from 'path';
 import { promises as fs } from 'fs';
+import path from 'path';
 import { EventEmitter } from 'events';
 import build from 'esbuild';
 import alias from 'esbuild-plugin-alias';
-import { fromSource } from 'convert-source-map';
+import { fromSource, SourceMapConverter } from 'convert-source-map';
 import v8toIstanbul from 'v8-to-istanbul';
 import libCov from 'istanbul-lib-coverage';
+import { JSCoverageEntry, Page } from 'puppeteer';
+import { CustomTestHost, KV, Logger, StaticSite, WorkerHost } from './types';
+import { shims } from '../build_opts';
 
-const dirname = path.dirname(new URL(import.meta.url).pathname);
+type Depends = { WorkerHost: typeof WorkerHost; logger: Logger };
+export class TestHost extends EventEmitter implements CustomTestHost {
+  public workerHost;
+  private inspect;
+  private logger;
+  private testsRan = false;
+  private _jestBrowserify = '';
 
-export class TestHost extends EventEmitter {
-  testsRan = false;
-  _jestBrowserify = '';
-
-  /**
-   * @param {number} port
-   * @param {boolean} inspect
-   * @param {StaticSite | null} site
-   * @param {KV} kv
-   */
-  constructor(port, inspect, site, kv, { WorkerHost, logger }) {
+  constructor(
+    port: number,
+    inspect: boolean,
+    site: StaticSite | null,
+    kv: KV,
+    { WorkerHost, logger }: Depends
+  ) {
     super();
     this.inspect = inspect;
     this.logger = logger;
     this.workerHost = new WorkerHost(port, inspect, site, kv);
   }
 
-  start() {
+  start(): Promise<void> {
     return this.workerHost.start();
   }
 
-  dispose() {
+  dispose(): void {
     this.workerHost.dispose();
   }
 
-  /**
-   * @param {string} code
-   * @param {Record<string, string> | null} manifest
-   */
-  async runTests(code, manifest) {
+  async runTests(code: string, manifest: Record<string, string> | null): Promise<unknown> {
     this.emit('test-start');
 
     const startTime = Date.now();
-    const testsRan = this.testsRan;
     this.testsRan = true;
     this.logger.progress('Waiting for worker host...');
 
     const page = await this.workerHost.pageReady;
-    if (testsRan) {
+    if (this.testsRan) {
       this.logger.progress('Reloading worker host...');
       await this.workerHost.reloadPage(); // reset so that tests can be rerun.
     }
@@ -60,15 +62,14 @@ export class TestHost extends EventEmitter {
     const globals = ['mocha'];
 
     await this.workerHost.setWorkerCode(code, '/test.js', globals, manifest);
-    /** @type {number} */
+
     this.logger.progress('Running tests...');
 
     if (process.env.COVERAGE === 'true') {
       await page.coverage.startJSCoverage({ includeRawScriptCoverage: true });
     }
     const failures = await page.evaluate(
-      // eslint-disable-next-line no-undef
-      () => new Promise((resolve) => mocha.run(resolve))
+      () => new Promise<number>((resolve) => mocha.run(resolve))
     );
 
     if (process.env.COVERAGE === 'true') {
@@ -86,35 +87,34 @@ export class TestHost extends EventEmitter {
     return failures;
   }
 
-  /**
-   * @param {import('puppeteer').Page} page
-   * @param {string} pathnamePrefix
-   */
-  async setup(page, pathnamePrefix) {
+  private async setup(page: Page, pathnamePrefix: string) {
+    // @ts-ignore
     await page.evaluate(() => (document.body.id = 'mocha'));
     await page.addStyleTag({ url: `${pathnamePrefix}/node_modules/mocha/mocha.css` });
     await page.addScriptTag({ url: `${pathnamePrefix}/node_modules/mocha/mocha.js` });
     await page.addScriptTag({ content: await this.jestBrowserify() });
 
-    await page.evaluate((inspect) => {
-      // eslint-disable-next-line no-undef
+    await page.evaluate<(inspect: boolean) => void>((inspect) => {
       mocha.setup({
         ui: 'bdd',
         reporter: inspect ? 'html' : 'spec',
         color: !this.inspect,
       });
 
-      // eslint-disable-next-line no-undef
       mocha.checkLeaks();
 
       // テストランナーは mocha だけど jest ライクにテストコードを記述できるように関数をカスタマイズする
-      const originalMochaFunctions = {
+      const originalMochaFunctions: Record<string, Mocha.TestFunction> = {
+        // @ts-ignore
         it: self.it,
       };
 
-      self.it = function (name, fn, timeout) {
+      // @ts-ignore
+      self.it = function (name: string, fn: () => Promise<void>, timeout?: number) {
         originalMochaFunctions.it(name, async function () {
-          this.timeout(timeout);
+          if (timeout) {
+            this.timeout(timeout);
+          }
           await fn();
         });
       };
@@ -125,15 +125,27 @@ export class TestHost extends EventEmitter {
     }, this.inspect);
   }
 
-  async jestBrowserify() {
+  private async jestBrowserify() {
     if (this._jestBrowserify) {
       return this._jestBrowserify;
     }
 
-    const emptyModule = path.resolve(dirname, '..', '..', 'src', 'shims', 'empty.ts');
-    this._jestBrowserify = await build
+    const jestCode = await build
       .build({
-        entryPoints: [path.resolve(dirname, 'test', 'jest_browserify.js')],
+        // entryPoints: [path.resolve(__dirname, 'test', 'jest_browserify.js')],
+        stdin: {
+          contents: `
+// jest-mock, マッチャをブラウザ上で実行できるようにする js をバンドルするためのエントリポイント
+
+// 循環参照している変数の console.log ができるようにするための目的で使う
+window._fss = require('fast-safe-stringify');
+
+window.jest = require('jest-mock');
+window.expect = require('expect');
+`,
+          resolveDir: path.resolve(__dirname),
+          loader: 'js',
+        },
         bundle: true,
         write: false,
         define: {
@@ -142,26 +154,30 @@ export class TestHost extends EventEmitter {
         },
         plugins: [
           alias({
-            path: emptyModule,
-            module: emptyModule,
-            util: emptyModule,
-            'graceful-fs': emptyModule,
+            path: shims.empty,
+            module: shims.empty,
+            util: shims.empty,
+            'graceful-fs': shims.empty,
           }),
         ],
       })
       .then(
-        (res) => res.outputFiles[0]?.text || 'throw new Error("bundle error of jest for browser")'
+        (res) =>
+          res.outputFiles.pop()?.text || 'throw new Error("bundle error of jest for browser")'
       )
       .catch(() => {
         console.trace();
       });
 
-    this.logger.success('bundle jest-browserify successfully');
+    if (jestCode) {
+      this.logger.success('bundle jest-browserify successfully');
+      this._jestBrowserify = jestCode;
+    }
 
     return this._jestBrowserify;
   }
 
-  async collectCoverage(coverages) {
+  private async collectCoverage(coverages: JSCoverageEntry[]) {
     const covTarget = coverages.find((cov) => cov.url.includes('/test.js'));
     if (!covTarget) {
       return;
@@ -170,6 +186,10 @@ export class TestHost extends EventEmitter {
     const bundledTestCode = this.stripCfWorkerDevAppendCodes(covTarget.text);
 
     const sourceMap = fromSource(bundledTestCode);
+    if (!sourceMap) {
+      return;
+    }
+
     await this.fillEmptyStringSourcesContent(sourceMap);
 
     // このパスは実在しないパスでも OK．ただし 1 階層ディレクトリをはさむパスにする必要がある
@@ -183,7 +203,10 @@ export class TestHost extends EventEmitter {
     );
 
     await converter.load();
-    converter.applyCoverage(this.reCalcScriptCoverageRanges(covTarget.rawScriptCoverage.functions));
+    converter.applyCoverage(
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      this.reCalcScriptCoverageRanges(covTarget.rawScriptCoverage!.functions)
+    );
 
     const cmap = libCov.createCoverageMap(converter.toIstanbul());
     await fs.mkdir('.nyc_output', { recursive: true });
@@ -192,14 +215,14 @@ export class TestHost extends EventEmitter {
     converter.destroy();
   }
 
-  stripCfWorkerDevAppendCodes(bundledTestCode) {
+  private stripCfWorkerDevAppendCodes(bundledTestCode: string) {
     const bundledTestCodeLines = bundledTestCode.split('\n');
     return bundledTestCodeLines.slice(3, bundledTestCodeLines.length - 3).join('\n');
   }
 
   // v8toIstanbul で null の sourcesContent があるとエラーが発生するのでその workaround
-  async fillEmptyStringSourcesContent(sourceMap) {
-    sourceMap.sourcemap.sourcesContent.forEach((content, idx) => {
+  private fillEmptyStringSourcesContent(sourceMap: SourceMapConverter) {
+    sourceMap.sourcemap.sourcesContent.forEach((content: string, idx: number) => {
       if (content) {
         return;
       }
@@ -214,19 +237,17 @@ export class TestHost extends EventEmitter {
   }
 
   // @cfworker/dev が追加するコードの文字数分削除したカバレッジに計算し直す
-  reCalcScriptCoverageRanges(scriptCoverages) {
+  private reCalcScriptCoverageRanges(
+    scriptCoverages: NonNullable<JSCoverageEntry['rawScriptCoverage']>['functions']
+  ) {
     const cfWorkerDevAppendCodesLen = 72;
-    return scriptCoverages.map((cov) => {
-      return !('ranges' in cov)
-        ? cov
-        : {
-            ...cov,
-            ranges: cov.ranges.map(({ startOffset, endOffset, ...rest }) => ({
-              ...rest,
-              startOffset: startOffset - cfWorkerDevAppendCodesLen,
-              endOffset: endOffset - cfWorkerDevAppendCodesLen,
-            })),
-          };
-    });
+    return scriptCoverages.map((cov) => ({
+      ...cov,
+      ranges: cov.ranges.map(({ startOffset, endOffset, ...rest }) => ({
+        ...rest,
+        startOffset: startOffset - cfWorkerDevAppendCodesLen,
+        endOffset: endOffset - cfWorkerDevAppendCodesLen,
+      })),
+    }));
   }
 }

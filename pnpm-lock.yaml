@@ -10,7 +10,9 @@ specifiers:
   '@graphql-codegen/cli': ^2.2.0
   '@graphql-codegen/typescript': ^2.2.2
   '@graphql-codegen/typescript-resolvers': ^2.2.1
+  '@types/convert-source-map': ^1.5.2
   '@types/jest': ^27.0.2
+  '@types/mocha': ^9.0.0
   '@typescript-eslint/eslint-plugin': ^4.31.2
   '@typescript-eslint/parser': ^4.31.2
   apollo-server-cloudflare: ^3.3.0
@@ -47,7 +49,9 @@ devDependencies:
   '@graphql-codegen/cli': 2.2.0_graphql@15.6.0+typescript@4.4.3
   '@graphql-codegen/typescript': 2.2.2_graphql@15.6.0
   '@graphql-codegen/typescript-resolvers': 2.2.1_graphql@15.6.0
+  '@types/convert-source-map': 1.5.2
   '@types/jest': 27.0.2
+  '@types/mocha': 9.0.0
   '@typescript-eslint/eslint-plugin': 4.31.2_3815fab247b4312be6d1f55eb1f81298
   '@typescript-eslint/parser': 4.31.2_eslint@7.32.0+typescript@4.4.3
   convert-source-map: 1.8.0
@@ -1459,6 +1463,10 @@ packages:
       source-map: 0.6.1
     dev: true
 
+  /@types/convert-source-map/1.5.2:
+    resolution: {integrity: sha512-tHs++ZeXer40kCF2JpE51Hg7t4HPa18B1b1Dzy96S0eCw8QKECNMYMfwa1edK/x8yCN0r4e6ewvLcc5CsVGkdg==}
+    dev: true
+
   /@types/estree/0.0.39:
     resolution: {integrity: sha512-EYNwp3bU+98cpU4lAWYYL7Zz+2gryWH1qbdDTidVd6hkiR6weksdbMadyXKXNPEkQFhXM+hVO9ZygomHXp+AIw==}
     dev: true
@@ -1529,6 +1537,10 @@ packages:
 
   /@types/minimatch/3.0.5:
     resolution: {integrity: sha512-Klz949h02Gz2uZCMGwDUSDS1YBlTdDDgbWHi+81l29tQALUtvz4rAYi5uoVhE5Lagoq6DeqAUlbrHvW/mXDgdQ==}
+    dev: true
+
+  /@types/mocha/9.0.0:
+    resolution: {integrity: sha512-scN0hAWyLVAvLR9AyW7HoFF5sJZglyBsbPuHO4fv7JRvfmPBMfp1ozWqOf/e4wwPNxezBZXRfWzMb6iFLgEVRA==}
     dev: true
 
   /@types/node/10.17.60:
