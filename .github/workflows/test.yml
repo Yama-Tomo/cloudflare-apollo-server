@@ -18,4 +18,4 @@ jobs:
       - run: npm i -g pnpm
       - run: pnpm i
       - run: pnpm lint
-      - run: pnpm test 'tests/**/*.test.ts' && pnpm nyc report
+      - run: COVERAGE=true pnpm test 'tests/**/*.test.ts' && pnpm nyc report
