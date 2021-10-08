@@ -57,7 +57,13 @@
     "nyc": "^15.1.0",
     "patch-package": "^6.4.7",
     "prettier": "^2.4.1",
+    "puppeteer": "^10.2.0",
     "typescript": "^4.4.3",
     "v8-to-istanbul": "^8.1.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "puppeteer": "^10.2.0"
+    }
   }
 }
