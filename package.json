@@ -9,7 +9,7 @@
     "lint:type-src": "tsc --pretty",
     "lint:type-test": "tsc -p ./tests/tsconfig.json --pretty",
     "lint:format": "prettier -c './**/*.{js,mjs,ts,tsx}'",
-    "build:cloudflare": "pnpm lint && node ./scripts/build/cloudflare.js",
+    "build:cloudflare": "./scripts/build_cloudflare.sh",
     "format": "prettier -w './**/*.{js,mjs,ts,tsx}'",
     "dev": "FORCE_COLOR=true run-p -l dev:*",
     "dev:server": "./scripts/dev_server.sh",
