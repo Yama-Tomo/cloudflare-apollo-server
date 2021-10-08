@@ -1,9 +1,13 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "isolatedModules": false
+    "isolatedModules": false,
+    "paths": {
+      "@main/*": ["./src/*"]
+    }
   },
   "include": [
-    "./"
+    "./",
+    "../node_modules/@cloudflare/workers-types/index.d.ts"
   ]
 }

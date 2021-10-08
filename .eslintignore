@@ -1,2 +1,3 @@
 dist
 src/resolvers/generated_types.ts
+coverage
