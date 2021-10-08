@@ -3,3 +3,4 @@ dist
 wrangler.toml
 .nyc_output
 coverage
+scripts/programs/.cfworker_dev_ext.js

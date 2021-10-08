@@ -1,4 +1,5 @@
 dist
 src/resolvers/generated_types.ts
 coverage
+scripts/programs/.cfworker_dev_ext.js
 scripts/programs/cfworker_dev_ext/types/*.d.ts
