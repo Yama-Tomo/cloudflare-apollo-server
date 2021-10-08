@@ -9,16 +9,15 @@
     "lint:type-src": "tsc --pretty",
     "lint:type-test": "tsc -p ./tests/tsconfig.json --pretty",
     "lint:format": "prettier -c './**/*.{js,mjs,ts,tsx}'",
-    "build:cloudflare": "pnpm lint && node ./scripts/build/cloudflare.js",
+    "build:cloudflare": "./scripts/build_cloudflare.sh",
     "format": "prettier -w './**/*.{js,mjs,ts,tsx}'",
     "dev": "FORCE_COLOR=true run-p -l dev:*",
-    "dev:server": "CFWORKER_CUSTOM_BUNDLER=$PWD/scripts/build/local.mjs pnpm -- cfworker run -w src/index.ts",
+    "dev:server": "./scripts/dev_server.sh",
     "dev:gen-graphql-types": "graphql-codegen --watch",
     "deploy:dev": "wrangler publish",
     "deploy:prod": "NODE_ENV=production wrangler publish --env prod",
-    "test": "CFWORKER_CUSTOM_BUNDLER=$PWD/scripts/build/local.mjs CFWORKER_CUSTOM_TEST_HOST=$PWD/scripts/build/test.mjs pnpm -- cfworker test -p 7001",
-    "test:with-cov": "COVERAGE=true run-s 'test {@}' cov:html -- ",
-    "cov:html": "nyc report --reporter=html",
+    "test": "./scripts/test.sh",
+    "test:with-cov": "./scripts/test_with_cov.sh",
     "postinstall": "patch-package"
   },
   "author": "",
@@ -39,12 +38,15 @@
     "@graphql-codegen/cli": "^2.2.0",
     "@graphql-codegen/typescript": "^2.2.2",
     "@graphql-codegen/typescript-resolvers": "^2.2.1",
+    "@types/convert-source-map": "^1.5.2",
     "@types/jest": "^27.0.2",
+    "@types/mocha": "^9.0.0",
     "@typescript-eslint/eslint-plugin": "^4.31.2",
     "@typescript-eslint/parser": "^4.31.2",
     "convert-source-map": "^1.8.0",
     "esbuild": "^0.13.1",
     "esbuild-plugin-alias": "^0.1.2",
+    "esbuild-register": "^3.0.0",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "expect": "^27.2.3",
@@ -57,7 +59,13 @@
     "nyc": "^15.1.0",
     "patch-package": "^6.4.7",
     "prettier": "^2.4.1",
+    "puppeteer": "^10.2.0",
     "typescript": "^4.4.3",
     "v8-to-istanbul": "^8.1.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "puppeteer": "^10.2.0"
+    }
   }
 }

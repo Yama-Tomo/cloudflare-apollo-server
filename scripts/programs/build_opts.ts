@@ -1,12 +1,13 @@
-const path = require('path');
-const alias = require('esbuild-plugin-alias');
+import path from 'path';
+import alias from 'esbuild-plugin-alias';
+import { BuildOptions } from 'esbuild';
 
 const shims = {
   empty: path.resolve(__dirname, '..', '..', 'src', 'shims', 'empty.ts'),
   buffer: path.resolve(__dirname, '..', '..', 'src', 'shims', 'buffer.ts'),
 };
 
-module.exports = () => ({
+const options = (): BuildOptions => ({
   outfile: path.resolve(__dirname, '..', '..', 'dist', 'index.js'),
   bundle: true,
   minify: true,
@@ -24,3 +25,5 @@ module.exports = () => ({
     }),
   ],
 });
+
+export { options, shims };

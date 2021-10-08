@@ -1,5 +1,8 @@
 lockfileVersion: 5.3
 
+overrides:
+  puppeteer: ^10.2.0
+
 specifiers:
   '@cfworker/dev': ^1.9.0
   '@cloudflare/workers-types': ^2.2.2
@@ -7,7 +10,9 @@ specifiers:
   '@graphql-codegen/cli': ^2.2.0
   '@graphql-codegen/typescript': ^2.2.2
   '@graphql-codegen/typescript-resolvers': ^2.2.1
+  '@types/convert-source-map': ^1.5.2
   '@types/jest': ^27.0.2
+  '@types/mocha': ^9.0.0
   '@typescript-eslint/eslint-plugin': ^4.31.2
   '@typescript-eslint/parser': ^4.31.2
   apollo-server-cloudflare: ^3.3.0
@@ -15,6 +20,7 @@ specifiers:
   convert-source-map: ^1.8.0
   esbuild: ^0.13.1
   esbuild-plugin-alias: ^0.1.2
+  esbuild-register: ^3.0.0
   eslint: ^7.32.0
   eslint-config-prettier: ^8.3.0
   expect: ^27.2.3
@@ -28,6 +34,7 @@ specifiers:
   nyc: ^15.1.0
   patch-package: ^6.4.7
   prettier: ^2.4.1
+  puppeteer: ^10.2.0
   typescript: ^4.4.3
   v8-to-istanbul: ^8.1.0
 
@@ -43,12 +50,15 @@ devDependencies:
   '@graphql-codegen/cli': 2.2.0_graphql@15.6.0+typescript@4.4.3
   '@graphql-codegen/typescript': 2.2.2_graphql@15.6.0
   '@graphql-codegen/typescript-resolvers': 2.2.1_graphql@15.6.0
+  '@types/convert-source-map': 1.5.2
   '@types/jest': 27.0.2
+  '@types/mocha': 9.0.0
   '@typescript-eslint/eslint-plugin': 4.31.2_3815fab247b4312be6d1f55eb1f81298
   '@typescript-eslint/parser': 4.31.2_eslint@7.32.0+typescript@4.4.3
   convert-source-map: 1.8.0
   esbuild: 0.13.1
   esbuild-plugin-alias: 0.1.2
+  esbuild-register: 3.0.0_esbuild@0.13.1
   eslint: 7.32.0
   eslint-config-prettier: 8.3.0_eslint@7.32.0
   expect: 27.2.3
@@ -61,6 +71,7 @@ devDependencies:
   nyc: 15.1.0
   patch-package: 6.4.7
   prettier: 2.4.1
+  puppeteer: 10.4.0
   typescript: 4.4.3
   v8-to-istanbul: 8.1.0
 
@@ -1454,6 +1465,10 @@ packages:
       source-map: 0.6.1
     dev: true
 
+  /@types/convert-source-map/1.5.2:
+    resolution: {integrity: sha512-tHs++ZeXer40kCF2JpE51Hg7t4HPa18B1b1Dzy96S0eCw8QKECNMYMfwa1edK/x8yCN0r4e6ewvLcc5CsVGkdg==}
+    dev: true
+
   /@types/estree/0.0.39:
     resolution: {integrity: sha512-EYNwp3bU+98cpU4lAWYYL7Zz+2gryWH1qbdDTidVd6hkiR6weksdbMadyXKXNPEkQFhXM+hVO9ZygomHXp+AIw==}
     dev: true
@@ -1524,6 +1539,10 @@ packages:
 
   /@types/minimatch/3.0.5:
     resolution: {integrity: sha512-Klz949h02Gz2uZCMGwDUSDS1YBlTdDDgbWHi+81l29tQALUtvz4rAYi5uoVhE5Lagoq6DeqAUlbrHvW/mXDgdQ==}
+    dev: true
+
+  /@types/mocha/9.0.0:
+    resolution: {integrity: sha512-scN0hAWyLVAvLR9AyW7HoFF5sJZglyBsbPuHO4fv7JRvfmPBMfp1ozWqOf/e4wwPNxezBZXRfWzMb6iFLgEVRA==}
     dev: true
 
   /@types/node/10.17.60:
@@ -2861,6 +2880,15 @@ packages:
 
   /esbuild-plugin-alias/0.1.2:
     resolution: {integrity: sha512-WsX0OJy8IGOsGZV+4oHEU5B6XQUpxOsZN1iSoYf9COTDbY7WXcOwd1oCLYNWUIWCExyGXSghIGq2k7sXBldxwQ==}
+    dev: true
+
+  /esbuild-register/3.0.0_esbuild@0.13.1:
+    resolution: {integrity: sha512-No7U3ZUd6gPrrC6gqdb3XFcf2lNqzn8nvQXcgcyOl8szMVuN6YUvOplnmakxWyogI9d8SiJMl0uzBzJck+Aoxw==}
+    peerDependencies:
+      esbuild: '>=0.12 <1'
+    dependencies:
+      esbuild: 0.13.1
+      jsonc-parser: 3.0.0
     dev: true
 
   /esbuild-sunos-64/0.13.1:
@@ -4228,6 +4256,10 @@ packages:
     hasBin: true
     dependencies:
       minimist: 1.2.5
+    dev: true
+
+  /jsonc-parser/3.0.0:
+    resolution: {integrity: sha512-fQzRfAbIBnR0IQvftw9FJveWiHp72Fg20giDrHz6TdfB12UH/uue0D3hm57UB5KgAVuniLMCaS8P1IMj9NR7cA==}
     dev: true
 
   /jsonfile/4.0.0:
