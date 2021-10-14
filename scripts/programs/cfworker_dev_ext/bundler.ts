@@ -7,6 +7,8 @@ import path from 'path';
 import { CustomBundler, Logger } from './types';
 import { options } from '../build_opts';
 
+const isAbsolute = (path: string) => path.startsWith('/');
+
 type Depends = { logger: Logger };
 export class Bundler extends EventEmitter implements CustomBundler {
   public code;
@@ -47,7 +49,7 @@ export class Bundler extends EventEmitter implements CustomBundler {
     const opts: BuildOptions = {
       ...options(),
       stdin: {
-        contents: entryPoints.map((f) => `import "./${f}"`).join('\n'),
+        contents: entryPoints.map((f) => `import "${isAbsolute(f) ? '' : './'}${f}"`).join('\n'),
         resolveDir: path.resolve(__dirname, '..', '..'),
         loader: 'ts',
       },
