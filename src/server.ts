@@ -2,6 +2,7 @@ import { ApolloServer, Config } from 'apollo-server-cloudflare';
 import { graphqlCloudflare } from 'apollo-server-cloudflare/dist/cloudflareApollo';
 import { typeDefs } from './schema';
 import { resolvers } from './resolvers';
+import { context } from './context';
 import { applyForCORS } from './cors';
 
 type CFOpts = { enableCORS?: boolean };
@@ -38,6 +39,7 @@ const createServer = (cfOpts?: CFOpts): ExtendApolloServer => {
       typeDefs,
       resolvers,
       introspection: process.env.NODE_ENV === 'development',
+      context,
     },
     cfOpts
   );
