@@ -10,6 +10,8 @@ export class WorkerHost extends EventEmitter {
     browser: import('puppeteer').Browser | undefined;
     /** @type {string|null} */
     localIP: string | null;
+    /** @type {Promise<void>} */
+    workerCodeSet: Promise<void>;
     port: number;
     inspect: boolean;
     server: Server;
