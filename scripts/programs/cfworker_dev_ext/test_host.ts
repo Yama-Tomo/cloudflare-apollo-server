@@ -154,6 +154,7 @@ window.expect = require('expect');
         },
         plugins: [
           alias({
+            url: shims.empty,
             path: shims.empty,
             module: shims.empty,
             util: shims.empty,
