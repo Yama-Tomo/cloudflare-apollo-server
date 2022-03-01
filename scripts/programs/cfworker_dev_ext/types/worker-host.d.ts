@@ -26,9 +26,9 @@ export class WorkerHost extends EventEmitter {
      * @param {string} sourcePathname Where to list the script in the chrome devtools sources tree.
      * @param {string[]} globals Names of additional globals to expose.
      * @param {Record<string, string> | null} staticContentManifest Workers site manifest.
-     * @param {import('./kv').KVNamespaceInit[]} kvNamespaces
+     * @param {import('./kv.js').KVNamespaceInit[]} kvNamespaces
      */
-    setWorkerCode(code: string, sourcePathname?: string, globals?: string[], staticContentManifest?: Record<string, string> | null, kvNamespaces?: import('./kv').KVNamespaceInit[]): Promise<void>;
+    setWorkerCode(code: string, sourcePathname?: string, globals?: string[], staticContentManifest?: Record<string, string> | null, kvNamespaces?: import('./kv.js').KVNamespaceInit[]): Promise<void>;
     reloadPage(): Promise<void>;
     /**
      * @param {import('http').IncomingMessage} req
@@ -41,6 +41,6 @@ export class WorkerHost extends EventEmitter {
     forkConsoleLog(page: import('puppeteer').Page): Promise<void>;
 }
 import { EventEmitter } from "events";
-import { Server } from "./server";
-import { KV } from "./kv";
-import { StaticSite } from "./static-site";
+import { Server } from "@cfworker/dev/src/server";
+import { KV } from "@cfworker/dev/src/kv";
+import { StaticSite } from "@cfworker/dev/src/static-site";

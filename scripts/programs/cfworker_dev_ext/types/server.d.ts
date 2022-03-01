@@ -26,4 +26,4 @@ export class Server extends EventEmitter {
     requestListener: import('http').RequestListener;
 }
 import { EventEmitter } from "events";
-import { StaticSite } from "./static-site";
+import { StaticSite } from "@cfworker/dev/src/static-site";
