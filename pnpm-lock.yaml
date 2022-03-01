@@ -23,6 +23,7 @@ specifiers:
   esbuild-register: ^3.3.2
   eslint: ^8.10.0
   eslint-config-prettier: ^8.4.0
+  eslint-formatter-codeframe: ^7.32.1
   expect: ^27.5.1
   fast-safe-stringify: ^2.1.1
   glob: ^7.2.0
@@ -61,6 +62,7 @@ devDependencies:
   esbuild-register: 3.3.2_esbuild@0.14.23
   eslint: 8.10.0
   eslint-config-prettier: 8.4.0_eslint@8.10.0
+  eslint-formatter-codeframe: 7.32.1
   expect: 27.5.1
   fast-safe-stringify: 2.1.1
   glob: 7.2.0
@@ -114,6 +116,12 @@ packages:
     dependencies:
       xss: 1.0.10
     dev: false
+
+  /@babel/code-frame/7.12.11:
+    resolution: {integrity: sha512-Zt1yodBx1UcyiePMSkWnU4hPqhwq7hGi2nFL1LeA3EUl+q2LQx16MISgJ0+z7dnmgvP9QtIleuETGOiOH1RcIw==}
+    dependencies:
+      '@babel/highlight': 7.16.10
+    dev: true
 
   /@babel/code-frame/7.16.7:
     resolution: {integrity: sha512-iAXqUn8IIeBTNd72xsFlgaXHkMBMt6y4HJp1tIaK465CWLT/fG1aqB7ykr95gHHmlBdGbFeWWfyB4NJJ0nmeIg==}
@@ -3062,6 +3070,14 @@ packages:
       eslint: '>=7.0.0'
     dependencies:
       eslint: 8.10.0
+    dev: true
+
+  /eslint-formatter-codeframe/7.32.1:
+    resolution: {integrity: sha512-DK/3Q3+zVKq/7PdSYiCxPrsDF8H/TRMK5n8Hziwr4IMkMy+XiKSwbpj25AdajS63I/B61Snetq4uVvX9fOLyAg==}
+    engines: {node: ^10.12.0 || >=12.0.0}
+    dependencies:
+      '@babel/code-frame': 7.12.11
+      chalk: 4.1.2
     dev: true
 
   /eslint-scope/5.1.1:
